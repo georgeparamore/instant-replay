@@ -1,0 +1,49 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url = 'https://repo.runelite.net'
+    }
+    mavenCentral()
+}
+
+def runeLiteVersion = 'latest.release'
+
+dependencies {
+    compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
+
+    // Pure-Java H.264/MP4 encoder; clips are encoded in parallel chunks
+    implementation 'org.jcodec:jcodec:0.2.5'
+    implementation 'org.jcodec:jcodec-javase:0.2.5'
+
+    compileOnly 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation group: 'net.runelite', name: 'client', version: runeLiteVersion
+}
+
+group = 'com.cliprecorder'
+version = '1.0-SNAPSHOT'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+
+// Launches the full RuneLite client with this plugin loaded (dev mode).
+// RuneLite requires -ea to sideload, but the GPU plugin's assertions can fire
+// during normal play and black-screen the client - so disable just those.
+tasks.register('runClient', JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'com.cliprecorder.ClipRecorderPluginTest'
+    enableAssertions = true
+    jvmArgs '-da:net.runelite.client.plugins.gpu...'
+}
