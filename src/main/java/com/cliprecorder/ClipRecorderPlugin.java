@@ -754,18 +754,9 @@ public class ClipRecorderPlugin extends Plugin
 			log.warn("Could not create clip directory {}", dir);
 			return;
 		}
-		ClipFormat format = config.format();
-		// Whole-kill PB clips can run minutes long - always save those as MP4
-		// so a 3-minute kill doesn't become a 1 GB file
-		if (format == ClipFormat.AVI && config.pbFullKill() && reason.contains("pb"))
-		{
-			format = ClipFormat.MP4;
-		}
-
 		// "Smaller files": drop to ~30 fps at save time - frames are already
-		// compressed, so this halves the file with zero extra work. MP4 is
-		// always capped at 30 fps to keep background encode times reasonable.
-		if ((config.smallerFiles() || format == ClipFormat.MP4) && fps > 35)
+		// compressed, so this halves the file with zero extra work.
+		if (config.smallerFiles() && fps > 35)
 		{
 			int factor = (int) Math.ceil(fps / 30.0);
 			List<Frame> decimated = new ArrayList<>((matching.size() + factor - 1) / factor);
@@ -789,24 +780,12 @@ public class ClipRecorderPlugin extends Plugin
 			return;
 		}
 
-		File file = new File(dir, LocalDateTime.now().format(FILE_TIMESTAMP) + "-" + reason + format.getExtension());
-
-		if (format == ClipFormat.MP4 && config.chatMessageOnClip())
-		{
-			queueChat("Encoding MP4 clip in the background - it will be ready in about a minute. You can keep playing.");
-		}
+		File file = new File(dir, LocalDateTime.now().format(FILE_TIMESTAMP) + "-" + reason + ".avi");
 
 		try
 		{
 			long t0 = System.nanoTime();
-			if (format == ClipFormat.MP4)
-			{
-				ParallelMp4Writer.write(file, matching, fps);
-			}
-			else
-			{
-				MjpegAviWriter.write(file, matching, fps, last.getWidth(), last.getHeight());
-			}
+			MjpegAviWriter.write(file, matching, fps, last.getWidth(), last.getHeight());
 			long ms = (System.nanoTime() - t0) / 1_000_000;
 			log.info("Saved clip {} ({} frames, {} fps, {} KB, wrote in {} ms)",
 				file.getName(), matching.size(), fps, file.length() / 1024, ms);

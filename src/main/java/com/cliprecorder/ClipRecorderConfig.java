@@ -77,19 +77,6 @@ public interface ClipRecorderConfig extends Config
 	}
 
 	@ConfigItem(
-		keyName = "format",
-		name = "Format",
-		description = "AVI saves instantly but makes very large files. MP4 is roughly 10x smaller and uploads "
-			+ "to Discord, but each clip takes around 30-60 seconds of background work to save - you can keep "
-			+ "playing while it encodes. MP4 clips are capped at 30 FPS",
-		position = 4
-	)
-	default ClipFormat format()
-	{
-		return ClipFormat.AVI;
-	}
-
-	@ConfigItem(
 		keyName = "clipHotkey",
 		name = "Clip hotkey",
 		description = "Save a clip of the last moments right now",
@@ -140,8 +127,8 @@ public interface ClipRecorderConfig extends Config
 		keyName = "pbFullKill",
 		name = "PB clips cover the whole kill",
 		description = "PB messages include the kill time - start the clip at the beginning of the kill "
-			+ "instead of only the last 'Clip length' seconds. Whole-kill clips always save as MP4 to keep "
-			+ "their file size reasonable. Needs 'PB kill memory' below to be at least as long as your kills",
+			+ "instead of only the last 'Clip length' seconds. Needs 'PB kill memory' below to be at "
+			+ "least as long as your kills",
 		section = triggerSection,
 		position = 1
 	)

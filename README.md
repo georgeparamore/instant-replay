@@ -44,7 +44,8 @@ merged into one clip.
 
 - Video is MJPEG-in-AVI — pure Java, no dependencies, plays in VLC and most
   players. Files are large-ish (~1–3 MB/s); clips are short so this is fine.
-  An MP4 (JCodec) option may come later.
+  To share a smaller file, convert the AVI to MP4 with any tool (e.g. ffmpeg)
+  after the fact.
 - **Video only.** Capturing game audio from inside the JVM isn't practical
   under Plugin Hub rules.
 - Capture only runs while logged in.
