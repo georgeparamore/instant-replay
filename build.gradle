@@ -3,14 +3,13 @@ plugins {
 }
 
 repositories {
-    mavenLocal()
     maven {
         url = 'https://repo.runelite.net'
     }
     mavenCentral()
 }
 
-def runeLiteVersion = 'latest.release'
+def runeLiteVersion = '1.12.33'
 
 dependencies {
     compileOnly group: 'net.runelite', name: 'client', version: runeLiteVersion
