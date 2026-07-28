@@ -158,8 +158,7 @@ public class ClipRecorderPlugin extends Plugin
 		// Parallel JPEG compression so high capture rates can keep up. Priority
 		// sits just below the game's render thread (NORM): low enough to yield,
 		// high enough to keep pace with capture so clips aren't choppy.
-		int encodeThreads = Math.max(2, Math.min(4, Runtime.getRuntime().availableProcessors() / 2));
-		encodeExecutor = Executors.newFixedThreadPool(encodeThreads, r -> namedThread(r, "clip-recorder-encode", ENCODE_PRIORITY));
+		encodeExecutor = Executors.newFixedThreadPool(ENCODE_THREADS, r -> namedThread(r, "clip-recorder-encode", ENCODE_PRIORITY));
 		writeExecutor = Executors.newSingleThreadExecutor(r -> namedThread(r, "clip-recorder-writer", ENCODE_PRIORITY));
 		keyManager.registerKeyListener(hotkeyListener);
 		restartCapture();
@@ -213,6 +212,10 @@ public class ClipRecorderPlugin extends Plugin
 	// Just below the game's render thread (NORM_PRIORITY = 5): yields to the
 	// game but still gets enough CPU to keep the capture rate up.
 	private static final int ENCODE_PRIORITY = Thread.NORM_PRIORITY - 2;
+
+	// Fixed-size JPEG encode pool. A small constant keeps capture parallel
+	// enough without probing the host for its core count.
+	private static final int ENCODE_THREADS = 3;
 
 	private static Thread namedThread(Runnable r, String name, int priority)
 	{
