@@ -75,8 +75,9 @@ public class ClipRecorderPlugin extends Plugin
 	// Quest completed scroll interface (core screenshot plugin uses the same group)
 	private static final int QUEST_COMPLETED_GROUP_ID = 153;
 
-	// Absolute safety net regardless of config: buffer never exceeds this
-	private static final long MAX_BUFFER_BYTES = 1024L * 1024 * 1024;
+	// Fixed buffer ceiling, sized to stay safe on the stock RuneLite client
+	// (-Xmx768m). Bounds worst-case memory without inspecting the runtime.
+	private static final long MAX_BUFFER_BYTES = 256L * 1024 * 1024;
 
 	private static final DateTimeFormatter FILE_TIMESTAMP = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
@@ -241,11 +242,9 @@ public class ClipRecorderPlugin extends Plugin
 		}
 		int capacity = (retentionSeconds + config.postRollSeconds() + 2) * fps;
 
-		// Memory clamp: never take more than 40% of the heap the client
-		// actually has. The stock RuneLite launcher runs at -Xmx768m, where
-		// the fixed cap alone would OOM-crash the whole client.
-		long heapBudget = (long) (Runtime.getRuntime().maxMemory() * 0.40);
-		long byteCap = Math.min(MAX_BUFFER_BYTES, Math.max(64L * 1024 * 1024, heapBudget));
+		// Memory clamp: bound the buffer to a fixed ceiling that stays safe on
+		// the stock client. The ring buffer evicts oldest frames past this.
+		long byteCap = MAX_BUFFER_BYTES;
 		buffer = new FrameRingBuffer(capacity, byteCap);
 
 		long neededBytes = (long) retentionSeconds * fps * estimateFrameBytes();
@@ -254,9 +253,8 @@ public class ClipRecorderPlugin extends Plugin
 			long coveredSeconds = byteCap / Math.max(1, estimateFrameBytes() * fps);
 			log.info("Buffer clamped to {} MB of {} MB requested - about {}s of footage at current settings",
 				byteCap / 1024 / 1024, neededBytes / 1024 / 1024, coveredSeconds);
-			queueChat("Instant Replay: your settings need more memory than RuneLite has available, so the buffer will "
-				+ "cover about " + coveredSeconds + " seconds instead of " + retentionSeconds + ". Lower the resolution "
-				+ "or FPS, or give RuneLite more memory in the launcher settings, to extend it.");
+			queueChat("Instant Replay: at this resolution and FPS the buffer holds about " + coveredSeconds
+				+ " seconds instead of " + retentionSeconds + ". Lower the resolution or FPS to capture more.");
 		}
 
 		captureTask = captureExecutor.scheduleAtFixedRate(this::captureTick, 0, 1000L / fps, TimeUnit.MILLISECONDS);
