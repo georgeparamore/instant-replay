@@ -21,17 +21,18 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.client.ui.PluginPanel;
-import net.runelite.client.util.LinkBrowser;
 
 /**
  * Side panel styled after the user's mockup: quick action buttons, recent
@@ -67,6 +68,7 @@ class ClipRecorderPanel extends PluginPanel
 	private final JLabel countBadge = new JLabel("0", SwingConstants.CENTER);
 	private final JLabel statusLabel = new JLabel("Idle");
 	private final StatusDot statusDot = new StatusDot();
+	private final JTextField folderPathField = new JTextField();
 
 	private final Timer pulseTimer;
 	private final Timer statusTimer;
@@ -107,9 +109,6 @@ class ClipRecorderPanel extends PluginPanel
 		RoundedButton saveButton = new RoundedButton("Save clip now", ORANGE, true, ClipRecorderPanel::paintRecordGlyph);
 		saveButton.onClick(e -> plugin.saveManualClip());
 
-		RoundedButton openButton = new RoundedButton("Open clips folder", TEXT, false, ClipRecorderPanel::paintFolderGlyph);
-		openButton.onClick(e -> openFile(plugin.getClipDirectory()));
-
 		RoundedButton refreshButton = new RoundedButton("Refresh list", TEXT, false, ClipRecorderPanel::paintRefreshGlyph);
 		refreshButton.onClick(e -> refresh());
 
@@ -120,9 +119,9 @@ class ClipRecorderPanel extends PluginPanel
 		actions.add(Box.createVerticalStrut(8));
 		actions.add(saveButton);
 		actions.add(Box.createVerticalStrut(8));
-		actions.add(openButton);
-		actions.add(Box.createVerticalStrut(8));
 		actions.add(refreshButton);
+		actions.add(Box.createVerticalStrut(14));
+		actions.add(buildFolderRow());
 
 		JPanel top = new JPanel();
 		top.setLayout(new BoxLayout(top, BoxLayout.Y_AXIS));
@@ -251,6 +250,8 @@ class ClipRecorderPanel extends PluginPanel
 	void refresh()
 	{
 		clipList.removeAll();
+		folderPathField.setText(plugin.getClipDirectory().getAbsolutePath());
+		folderPathField.setCaretPosition(0);
 
 		// Badge shows the total clip count; the list shows only the newest few
 		List<File> allClips = plugin.listRecentClips(Integer.MAX_VALUE);
@@ -302,15 +303,33 @@ class ClipRecorderPanel extends PluginPanel
 		}
 	}
 
-	private static void openFile(File target)
+	/**
+	 * The plugin can't launch a file manager (no allowed API for it), so show
+	 * the clips-folder path as read-only, selectable text the user can copy.
+	 */
+	private JComponent buildFolderRow()
 	{
-		if (target == null || !target.exists())
-		{
-			return;
-		}
-		// RuneLite's own helper (used by the core screenshot plugin) - stays
-		// within Plugin Hub rules, unlike java.awt.Desktop
-		LinkBrowser.open(target.getAbsolutePath());
+		JLabel label = sectionLabel("Clips folder");
+
+		folderPathField.setEditable(false);
+		folderPathField.setText(plugin.getClipDirectory().getAbsolutePath());
+		folderPathField.setCaretPosition(0);
+		folderPathField.setBackground(CARD);
+		folderPathField.setForeground(SUBTEXT);
+		folderPathField.setFont(ROW_SUB_FONT);
+		folderPathField.setBorder(BorderFactory.createEmptyBorder(6, 8, 6, 8));
+		folderPathField.setToolTipText("Select and copy this path to open it in your file manager");
+		folderPathField.setAlignmentX(Component.LEFT_ALIGNMENT);
+		folderPathField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 28));
+
+		JPanel p = new JPanel();
+		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
+		p.setBackground(BG);
+		p.setAlignmentX(Component.LEFT_ALIGNMENT);
+		p.add(label);
+		p.add(Box.createVerticalStrut(6));
+		p.add(folderPathField);
+		return p;
 	}
 
 	// ---- Components ----
@@ -584,7 +603,6 @@ class ClipRecorderPanel extends PluginPanel
 			setLayout(new BorderLayout(10, 0));
 			setBorder(BorderFactory.createEmptyBorder(8, 12, 8, 8));
 			setMaximumSize(new Dimension(Integer.MAX_VALUE, 52));
-			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 			setToolTipText(clip.getAbsolutePath());
 
 			JPanel playWrap = new JPanel(new BorderLayout())
@@ -594,7 +612,7 @@ class ClipRecorderPanel extends PluginPanel
 				{
 					Graphics2D g2 = (Graphics2D) g;
 					g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-					paintPlayGlyph(g2, 2, (getHeight() - 12) / 2, 12, TEXT);
+					paintClipGlyph(g2, 1, (getHeight() - 12) / 2, 14, TEXT);
 				}
 			};
 			playWrap.setOpaque(false);
@@ -637,12 +655,6 @@ class ClipRecorderPanel extends PluginPanel
 			addMouseListener(new MouseAdapter()
 			{
 				@Override
-				public void mouseClicked(MouseEvent e)
-				{
-					openFile(clip);
-				}
-
-				@Override
 				public void mouseEntered(MouseEvent e)
 				{
 					hover = true;
@@ -661,10 +673,6 @@ class ClipRecorderPanel extends PluginPanel
 		private void showMenu(Component anchor, File clip)
 		{
 			JPopupMenu menu = new JPopupMenu();
-			JMenuItem play = new JMenuItem("Play");
-			play.addActionListener(a -> openFile(clip));
-			JMenuItem show = new JMenuItem("Show in folder");
-			show.addActionListener(a -> openFile(clip.getParentFile()));
 			JMenuItem delete = new JMenuItem("Delete");
 			delete.addActionListener(a ->
 			{
@@ -675,8 +683,6 @@ class ClipRecorderPanel extends PluginPanel
 					refresh();
 				}
 			});
-			menu.add(play);
-			menu.add(show);
 			menu.add(delete);
 			menu.show(anchor, 0, anchor.getHeight());
 		}
@@ -704,22 +710,6 @@ class ClipRecorderPanel extends PluginPanel
 		g2.fillOval(x + (size - dot) / 2, y + (size - dot) / 2, dot, dot);
 	}
 
-	private static void paintFolderGlyph(Graphics2D g2, int x, int y, int size, Color color)
-	{
-		g2.setColor(color);
-		g2.setStroke(new BasicStroke(1.4f));
-		int tab = size / 3;
-		Path2D p = new Path2D.Float();
-		p.moveTo(x, y + 2);
-		p.lineTo(x + tab, y + 2);
-		p.lineTo(x + tab + 2, y + 4);
-		p.lineTo(x + size - 1, y + 4);
-		p.lineTo(x + size - 1, y + size - 2);
-		p.lineTo(x, y + size - 2);
-		p.closePath();
-		g2.draw(p);
-	}
-
 	private static void paintRefreshGlyph(Graphics2D g2, int x, int y, int size, Color color)
 	{
 		g2.setColor(color);
@@ -735,15 +725,15 @@ class ClipRecorderPanel extends PluginPanel
 		g2.draw(arrow);
 	}
 
-	private static void paintPlayGlyph(Graphics2D g2, int x, int y, int size, Color color)
+	// A neutral "video clip" mark (a film frame) - the panel can't launch
+	// playback, so this is decorative, not a play button.
+	private static void paintClipGlyph(Graphics2D g2, int x, int y, int size, Color color)
 	{
 		g2.setColor(color);
-		Path2D p = new Path2D.Float();
-		p.moveTo(x + 2, y);
-		p.lineTo(x + size - 1, y + size / 2f);
-		p.lineTo(x + 2, y + size);
-		p.closePath();
-		g2.fill(p);
+		g2.setStroke(new BasicStroke(1.3f));
+		g2.drawRoundRect(x, y + 1, size - 2, size - 3, 3, 3);
+		int mid = y + (size - 1) / 2;
+		g2.drawLine(x + 3, mid, x + size - 5, mid);
 	}
 
 	private static String formatSize(long bytes)
