@@ -276,16 +276,4 @@ public interface ClipRecorderConfig extends Config
 	{
 		return 70;
 	}
-
-	@ConfigItem(
-		keyName = "outputFolder",
-		name = "Custom clips folder",
-		description = "Folder to save clips in. Leave blank for the default (.runelite\\clips)",
-		section = advancedSection,
-		position = 3
-	)
-	default String outputFolder()
-	{
-		return "";
-	}
 }

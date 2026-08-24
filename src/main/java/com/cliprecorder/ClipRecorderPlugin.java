@@ -852,21 +852,9 @@ public class ClipRecorderPlugin extends Plugin
 	 */
 	private File getClipRoot()
 	{
-		String custom = config.outputFolder();
-		if (custom != null && !custom.trim().isEmpty())
-		{
-			return new File(custom.trim());
-		}
-		return new File(RuneLite.RUNELITE_DIR, "clips");
-	}
-
-	/**
-	 * Best folder to open for the user: their player folder if it exists,
-	 * otherwise the clip root.
-	 */
-	void setOutputFolder(File dir)
-	{
-		configManager.setConfiguration(ClipRecorderConfig.GROUP, "outputFolder", dir.getAbsolutePath());
+		// Plugin Hub rule: all file I/O must stay within a plugin-specific
+		// subdirectory of .runelite. Fixed location, no user-chosen folder.
+		return new File(RuneLite.RUNELITE_DIR, "instant-replay");
 	}
 
 	File getClipDirectory()

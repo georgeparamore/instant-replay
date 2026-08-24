@@ -22,7 +22,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -87,21 +86,10 @@ class ClipRecorderPanel extends PluginPanel
 		title.setFont(TITLE_FONT);
 		title.setForeground(TEXT);
 
-		KebabButton headerMenu = new KebabButton(true);
-		headerMenu.onClick(e ->
-		{
-			JPopupMenu menu = new JPopupMenu();
-			JMenuItem choose = new JMenuItem("Choose clips folder...");
-			choose.addActionListener(a -> chooseFolder());
-			menu.add(choose);
-			menu.show(headerMenu, 0, headerMenu.getHeight());
-		});
-
 		JPanel header = new JPanel(new BorderLayout(8, 0));
 		header.setBackground(BG);
 		header.add(headerIcon, BorderLayout.WEST);
 		header.add(title, BorderLayout.CENTER);
-		header.add(headerMenu, BorderLayout.EAST);
 
 		// ---- Quick actions ----
 		JLabel quickLabel = sectionLabel("Quick Actions");
@@ -289,18 +277,6 @@ class ClipRecorderPanel extends PluginPanel
 		label.setForeground(SUBTEXT);
 		label.setAlignmentX(Component.LEFT_ALIGNMENT);
 		return label;
-	}
-
-	private void chooseFolder()
-	{
-		JFileChooser chooser = new JFileChooser(plugin.getClipDirectory());
-		chooser.setDialogTitle("Choose clips folder");
-		chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION)
-		{
-			plugin.setOutputFolder(chooser.getSelectedFile());
-			refresh();
-		}
 	}
 
 	/**

@@ -13,7 +13,7 @@ something notable happens:
 - **Level up** (off by default)
 - **Manual hotkey** (default **F8**) — "clip the last 30 seconds now"
 
-Clips are saved to `~/.runelite/clips/<player>/<timestamp>-<reason>.avi`.
+Clips are saved to `~/.runelite/instant-replay/<player>/<category>/<timestamp>-<reason>.avi`.
 
 Automatic triggers keep recording for a configurable post-roll (default 10 s)
 so the drop/animation is included, and triggers that fire close together are
