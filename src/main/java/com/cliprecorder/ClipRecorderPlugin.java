@@ -75,9 +75,11 @@ public class ClipRecorderPlugin extends Plugin
 	// Quest completed scroll interface (core screenshot plugin uses the same group)
 	private static final int QUEST_COMPLETED_GROUP_ID = 153;
 
-	// Fixed buffer ceiling, sized to stay safe on the stock RuneLite client
-	// (-Xmx768m). Bounds worst-case memory without inspecting the runtime.
-	private static final long MAX_BUFFER_BYTES = 256L * 1024 * 1024;
+	// Absolute ceiling regardless of the configured value - even a user who
+	// cranks the memory setting can't exceed this. The effective cap is the
+	// smaller of this and the "Max memory" config (default 64 MB), so the
+	// buffer stays safe on the stock -Xmx768m client with many plugins loaded.
+	private static final long MAX_BUFFER_BYTES = 512L * 1024 * 1024;
 
 	private static final DateTimeFormatter FILE_TIMESTAMP = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
 
@@ -242,9 +244,10 @@ public class ClipRecorderPlugin extends Plugin
 		}
 		int capacity = (retentionSeconds + config.postRollSeconds() + 2) * fps;
 
-		// Memory clamp: bound the buffer to a fixed ceiling that stays safe on
-		// the stock client. The ring buffer evicts oldest frames past this.
-		long byteCap = MAX_BUFFER_BYTES;
+		// Memory clamp: bound the buffer to the user's configured budget (never
+		// above the hard ceiling). Small default so the stock -Xmx768m client
+		// can't run out of heap. The ring buffer evicts oldest frames past this.
+		long byteCap = Math.min(MAX_BUFFER_BYTES, (long) config.maxMemoryMb() * 1024 * 1024);
 		buffer = new FrameRingBuffer(capacity, byteCap);
 
 		long neededBytes = (long) retentionSeconds * fps * estimateFrameBytes();
@@ -269,7 +272,8 @@ public class ClipRecorderPlugin extends Plugin
 		}
 		String key = event.getKey();
 		if ("fps".equals(key) || "bufferSeconds".equals(key) || "postRollSeconds".equals(key)
-			|| "clipOnPb".equals(key) || "pbFullKill".equals(key) || "pbMemoryMinutes".equals(key))
+			|| "clipOnPb".equals(key) || "pbFullKill".equals(key) || "pbMemoryMinutes".equals(key)
+			|| "maxMemoryMb".equals(key))
 		{
 			captureExecutor.execute(this::restartCapture);
 		}

@@ -276,4 +276,20 @@ public interface ClipRecorderConfig extends Config
 	{
 		return 70;
 	}
+
+	@Range(min = 16, max = 512)
+	@ConfigItem(
+		keyName = "maxMemoryMb",
+		name = "Max memory (MB)",
+		description = "Hard limit on how much memory the rolling buffer may use. Keep this low unless you have "
+			+ "given RuneLite extra heap in the launcher (JVM arguments, e.g. -Xmx2048m) - the default client only "
+			+ "has 768 MB total, and setting this too high can crash the client. If a clip is shorter than your "
+			+ "Clip length, lower the resolution/FPS or raise this after increasing RuneLite's memory",
+		section = advancedSection,
+		position = 3
+	)
+	default int maxMemoryMb()
+	{
+		return 64;
+	}
 }
