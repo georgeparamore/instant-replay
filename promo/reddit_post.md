@@ -45,12 +45,20 @@ Video is MJPEG-in-AVI (video only, no audio — capturing game audio from inside
 practical under Plugin Hub rules), plays fine in VLC, and you can convert to MP4 with ffmpeg if
 you want a smaller file to share.
 
-Screenshots of the side panel and settings below. Search **"Instant Replay"** in the Plugin Hub
-to grab it — would love feedback on what other triggers people would want (clue steps? wilderness
-PKs?).
+Screenshots of the side panel and settings below. It's on the Plugin Hub as **Instant Replay** —
+GitHub/source: [link] — would love feedback on what other triggers people would want (clue steps?
+wilderness PKs?).
+
+*(Disclosure per rule 9: this is a coding project, some parts of which — including this write-up
+and the promo screenshot — were put together with AI assistance.)*
 
 [screenshot: promo/showcase.png]
 
 ---
-*(Swap in your actual Plugin Hub link / GitHub link before posting, and attach promo/showcase.png
-as the post image.)*
+*(Notes for you before posting, not part of the post itself:
+- Rule 7 (self-promo): fine to link straight to the plugin's own GitHub/Plugin Hub page — that's
+  the specific creation, not a general channel link. Just don't link anywhere that solicits
+  donations/sales.
+- Rule 9 (AI content): plugins/coding projects using AI are explicitly allowed, but disclosure is
+  encouraged — the disclosure line above covers that. Swap in your actual GitHub/Plugin Hub URL
+  and attach promo/showcase.png as the post image.)*
