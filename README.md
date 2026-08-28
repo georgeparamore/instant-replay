@@ -74,5 +74,4 @@ full RuneLite client with the plugin loaded.
 
 Designed within Plugin Hub constraints: Java only, no native code, no external
 processes, no runtime downloads, no reflection, zero third-party dependencies
-(the AVI muxer and JPEG encoding use only the JDK). Before submitting, ask in
-RuneLite Discord #plugin-hub whether a clip recorder would be accepted.
+(the AVI muxer and JPEG encoding use only the JDK).
