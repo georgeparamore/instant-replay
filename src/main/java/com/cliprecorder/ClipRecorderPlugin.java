@@ -28,6 +28,8 @@ import net.runelite.api.Player;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.widgets.Widget;
+import net.runelite.api.widgets.WidgetID;
 import net.runelite.client.Notifier;
 import net.runelite.client.RuneLite;
 import net.runelite.client.chat.ChatColorType;
@@ -297,11 +299,17 @@ public class ClipRecorderPlugin extends Plugin
 
 		drawManager.requestNextFrameListener(image ->
 		{
-			// Do nothing heavy on the client/render thread: hand the frame
-			// straight to the background pool. All per-pixel work (still-frame
-			// detection AND JPEG encoding) happens off this thread so capture
-			// never drops the game's own frame rate.
+			// This listener fires on the client thread, so it's the only safe
+			// place to touch widgets. Never record the bank PIN keypad: drop
+			// the frame here, before it ever reaches the encoder or the ring
+			// buffer, so a PIN can never end up in a saved clip.
 			framePending.set(false);
+
+			Widget bankPin = client.getWidget(WidgetID.BANK_PIN_GROUP_ID, 0);
+			if (bankPin != null && !bankPin.isHidden())
+			{
+				return;
+			}
 
 			ExecutorService exec = encodeExecutor;
 			if (exec == null || encodesInFlight.get() >= 4)
