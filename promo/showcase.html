@@ -1,0 +1,243 @@
+<title>Instant Replay Showcase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Committed dark showcase — it exists to frame a dark RuneLite UI, so every
+     surface is painted explicitly and the design stays dark on any host. */
+  :root{
+    --ground:#0c0d0f;
+    --ground-2:#111317;
+    --panel:#17191c;
+    --card:#24272b;
+    --card-hi:#2d3136;
+    --line:#2b2f34;
+    --text:#e8e9ea;
+    --sub:#9aa0a6;
+    --faint:#6b7178;
+    --orange:#f09022;
+    --orange-soft:#f0902233;
+    --red:#e5483c;
+    --green:#3ac569;
+    --display:'Sora',system-ui,sans-serif;
+    --body:'IBM Plex Sans',system-ui,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1100px 620px at 50% -8%, #1a1712 0%, rgba(26,23,18,0) 60%),
+      radial-gradient(900px 500px at 88% 12%, #131a17 0%, rgba(19,26,23,0) 55%),
+      var(--ground);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    padding:56px 32px 40px;
+  }
+  .wrap{max-width:1120px;margin:0 auto}
+
+  /* ---- Masthead ---- */
+  .mast{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;margin-bottom:12px}
+  .badge{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--orange);background:var(--orange-soft);
+    border:1px solid #f0902255;border-radius:100px;padding:6px 13px 6px 11px;
+  }
+  .rec{width:11px;height:11px;border-radius:50%;border:2px solid var(--orange);position:relative;flex:none}
+  .rec::after{content:"";position:absolute;inset:2.5px;border-radius:50%;background:var(--red)}
+  h1{
+    font-family:var(--display);font-weight:700;letter-spacing:-.02em;
+    font-size:clamp(38px,6vw,60px);line-height:1;text-wrap:balance;
+  }
+  h1 .g{background:linear-gradient(92deg,#ffb454,var(--orange));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .tag{max-width:62ch;color:var(--sub);font-size:clamp(15px,2vw,18px);text-wrap:balance}
+  .tag b{color:var(--text);font-weight:600}
+
+  /* ---- Figure stage ---- */
+  .stage{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:44px;align-items:start}
+  @media (max-width:880px){.stage{grid-template-columns:1fr}}
+  .figure{
+    background:linear-gradient(180deg,var(--ground-2),#0e0f12);
+    border:1px solid var(--line);border-radius:20px;
+    padding:22px 22px 20px;
+    box-shadow:0 30px 70px -40px rgba(0,0,0,.9);
+  }
+  .figure > h2{
+    font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--faint);margin-bottom:16px;display:flex;align-items:center;gap:8px;
+  }
+  .figure > h2::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--orange)}
+  .fig-body{display:flex;gap:18px}
+
+  /* ---- The recreated RuneLite panel ---- */
+  .panel{
+    width:236px;flex:none;background:var(--panel);border:1px solid #000;border-radius:10px;
+    padding:12px;font-size:12px;position:relative;
+    box-shadow:0 18px 40px -22px rgba(0,0,0,.8);
+  }
+  .p-head{display:flex;align-items:center;gap:9px;margin-bottom:15px;position:relative}
+  .p-head .ring{width:18px;height:18px;border-radius:50%;border:2px solid var(--orange);position:relative;flex:none}
+  .p-head .ring::after{content:"";position:absolute;inset:4px;border-radius:50%;background:var(--red)}
+  .p-title{font-family:var(--display);font-weight:600;font-size:15px;color:var(--text)}
+  .lbl{color:var(--sub);font-size:11px;margin:0 0 8px}
+  .btn{
+    display:flex;align-items:center;gap:10px;background:var(--card);border-radius:11px;
+    padding:9px 12px;margin-bottom:8px;color:var(--text);position:relative;
+  }
+  .btn.primary{border:1.5px solid var(--orange);color:var(--orange)}
+  .btn .ic{width:14px;height:14px;flex:none;display:grid;place-items:center}
+  .dot-ic{width:13px;height:13px;border:1.5px solid currentColor;border-radius:50%;position:relative}
+  .dot-ic::after{content:"";position:absolute;inset:3px;border-radius:50%;background:currentColor}
+  .path{
+    background:var(--card);border-radius:8px;padding:7px 9px;color:var(--sub);
+    font-family:var(--mono);font-size:10.5px;margin-bottom:14px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;
+  }
+  .recent-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:9px}
+  .recent-h span{color:var(--sub);font-size:11px}
+  .count{background:var(--card-hi);color:var(--text);border-radius:11px;padding:1px 9px;font-size:11px;font-variant-numeric:tabular-nums}
+  .clip{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:11px;padding:8px 10px;margin-bottom:7px}
+  .clip .cg{width:14px;height:11px;border:1.3px solid var(--text);border-radius:3px;flex:none;position:relative;opacity:.85}
+  .clip .cg::after{content:"";position:absolute;top:4px;left:2.5px;right:2.5px;height:1.3px;background:var(--text)}
+  .clip .meta{min-width:0}
+  .clip .fn{color:var(--text);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .clip .sub{display:flex;justify-content:space-between;gap:8px;color:var(--faint);font-size:10px;margin-top:2px;font-family:var(--mono)}
+  .foot{display:flex;align-items:center;gap:7px;border-top:1px solid var(--line);margin-top:11px;padding-top:10px;color:var(--sub);font-size:11px}
+  .wave{display:flex;align-items:flex-end;gap:2px;height:12px}
+  .wave i{width:2px;background:var(--sub);border-radius:2px}
+  .sdot{margin-left:auto;width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px #3ac56926}
+
+  /* numbered annotation markers pinned to elements */
+  .mk{
+    position:absolute;width:20px;height:20px;border-radius:50%;
+    background:var(--orange);color:#1a1206;font-family:var(--mono);font-weight:500;font-size:11px;
+    display:grid;place-items:center;box-shadow:0 0 0 3px var(--panel),0 4px 10px rgba(0,0,0,.5);z-index:3;
+  }
+
+  /* settings rows */
+  .set{width:236px;flex:none;background:var(--panel);border:1px solid #000;border-radius:10px;padding:6px 12px 12px;position:relative;box-shadow:0 18px 40px -22px rgba(0,0,0,.8)}
+  .srow{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #1e2125;position:relative}
+  .srow:last-child{border-bottom:0}
+  .srow .k{color:var(--text);font-size:12px}
+  .srow .k small{display:block;color:var(--faint);font-size:10px;margin-top:1px}
+  .pill{background:var(--card);border-radius:6px;padding:3px 9px;color:var(--sub);font-family:var(--mono);font-size:11px;white-space:nowrap}
+  .pill.sel::after{content:" ▾";color:var(--faint)}
+  .chk{width:15px;height:15px;border-radius:3px;border:1.5px solid #3a3f45;flex:none;position:relative}
+  .chk.on{background:var(--orange);border-color:var(--orange)}
+  .chk.on::after{content:"";position:absolute;left:4.5px;top:1.5px;width:4px;height:8px;border:solid #1a1206;border-width:0 2px 2px 0;transform:rotate(42deg)}
+  .sect{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);padding:12px 0 4px}
+
+  /* caption legend */
+  .caps{display:flex;flex-direction:column;gap:13px;padding-top:4px}
+  .cap{display:flex;gap:11px;align-items:flex-start}
+  .cap .n{width:20px;height:20px;border-radius:50%;background:var(--orange-soft);border:1px solid #f0902255;color:var(--orange);font-family:var(--mono);font-size:11px;display:grid;place-items:center;flex:none;margin-top:1px}
+  .cap .t{font-size:12.5px;color:var(--text)}
+  .cap .t b{color:var(--orange);font-weight:600}
+  .cap .t span{color:var(--sub)}
+
+  /* privacy strip */
+  .strip{
+    margin-top:38px;border:1px solid var(--line);border-radius:16px;
+    background:linear-gradient(180deg,var(--ground-2),#0d0e11);
+    padding:20px 24px;display:flex;flex-wrap:wrap;gap:14px 34px;align-items:center;justify-content:center;
+  }
+  .strip .it{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--sub)}
+  .strip .it b{color:var(--text);font-weight:600}
+  .strip .it .k{width:9px;height:9px;border-radius:2px;background:var(--green);flex:none;box-shadow:0 0 0 3px #3ac56922}
+  .foot-note{text-align:center;color:var(--faint);font-family:var(--mono);font-size:11px;margin-top:22px;letter-spacing:.04em}
+</style>
+
+<div class="wrap">
+  <header class="mast">
+    <span class="badge"><span class="rec"></span>RuneLite plugin</span>
+    <h1>Instant <span class="g">Replay</span></h1>
+    <p class="tag">A rolling buffer of your last moments, always running. It <b>auto-saves a clip the instant something good happens</b> — a PB, a pet, a big drop — like ShadowPlay for Old School RuneScape.</p>
+  </header>
+
+  <div class="stage">
+
+    <!-- SIDE PANEL FIGURE -->
+    <section class="figure">
+      <h2>The side panel</h2>
+      <div class="fig-body">
+        <div class="panel">
+          <div class="p-head">
+            <span class="ring"></span>
+            <span class="p-title">Instant Replay</span>
+            <span class="mk" style="left:2px;top:-6px">1</span>
+          </div>
+          <p class="lbl">Quick Actions</p>
+          <div class="btn primary">
+            <span class="ic"><span class="dot-ic"></span></span>Save clip now
+            <span class="mk" style="right:-8px;top:-8px">2</span>
+          </div>
+          <div class="btn"><span class="ic">↻</span>Refresh list</div>
+          <p class="lbl" style="margin-top:6px">Clips folder</p>
+          <div class="path">.runelite/instant-replay/Blitzen</div>
+          <div class="recent-h">
+            <span>Recent Clips</span><span class="count">12</span>
+          </div>
+          <div class="clip"><span class="cg"></span><div class="meta"><div class="fn">…23-14-02-pb.avi</div><div class="sub"><span>11:14 PM</span><span>84 MB</span></div></div>
+            <span class="mk" style="right:-8px;top:-8px">3</span>
+          </div>
+          <div class="clip"><span class="cg"></span><div class="meta"><div class="fn">…22-58-40-pet.avi</div><div class="sub"><span>10:58 PM</span><span>61 MB</span></div></div></div>
+          <div class="clip"><span class="cg"></span><div class="meta"><div class="fn">…22-31-05-drop.avi</div><div class="sub"><span>10:31 PM</span><span>120 MB</span></div></div></div>
+          <div class="foot">
+            <span class="wave"><i style="height:4px"></i><i style="height:8px"></i><i style="height:12px"></i><i style="height:8px"></i><i style="height:4px"></i></span>
+            Buffering<span class="sdot"></span>
+            <span class="mk" style="right:-8px;bottom:-8px">4</span>
+          </div>
+        </div>
+        <div class="caps">
+          <div class="cap"><span class="n">1</span><span class="t"><b>Record light.</b> <span>The dot pulses red the moment a clip is being written.</span></span></div>
+          <div class="cap"><span class="n">2</span><span class="t"><b>Clip on demand.</b> <span>Grab the last 30 seconds any time — button or the F8 hotkey.</span></span></div>
+          <div class="cap"><span class="n">3</span><span class="t"><b>Recent clips.</b> <span>Every save, newest first, filed by trigger into its own folder.</span></span></div>
+          <div class="cap"><span class="n">4</span><span class="t"><b>Live status.</b> <span>Green “Buffering” while you’re logged in; grey when you’re not.</span></span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SETTINGS FIGURE -->
+    <section class="figure">
+      <h2>Triggers &amp; settings</h2>
+      <div class="fig-body">
+        <div class="set">
+          <div class="srow"><span class="k">Clip length</span><span class="pill">30s</span></div>
+          <div class="srow"><span class="k">Resolution</span><span class="pill sel">720p</span>
+            <span class="mk" style="right:-8px;top:2px">1</span>
+          </div>
+          <div class="srow"><span class="k">Frame rate</span><span class="pill sel">30 FPS</span></div>
+          <div class="srow"><span class="k">Clip hotkey</span><span class="pill">F8</span></div>
+          <div class="sect">Triggers</div>
+          <div class="srow"><span class="k">New personal best</span><span class="chk on"></span></div>
+          <div class="srow"><span class="k">Valuable drop <small>≥ 1,000,000 gp</small></span><span class="chk on"></span>
+            <span class="mk" style="right:-8px;top:6px">2</span>
+          </div>
+          <div class="srow"><span class="k">Pet drop</span><span class="chk on"></span>
+            <span class="mk" style="right:-8px;top:6px">3</span>
+          </div>
+          <div class="srow"><span class="k">Collection log slot</span><span class="chk on"></span></div>
+          <div class="srow"><span class="k">Quest completion</span><span class="chk on"></span></div>
+          <div class="srow"><span class="k">Combat achievement</span><span class="chk on"></span></div>
+          <div class="srow"><span class="k">Death</span><span class="chk"></span></div>
+        </div>
+        <div class="caps">
+          <div class="cap"><span class="n">1</span><span class="t"><b>Your call on quality.</b> <span>Resolution and frame rate trade sharpness against performance.</span></span></div>
+          <div class="cap"><span class="n">2</span><span class="t"><b>Tune what counts.</b> <span>Set the GP value that makes a drop “valuable” — big loot clips itself, junk doesn’t.</span></span></div>
+          <div class="cap"><span class="n">3</span><span class="t"><b>The moments that matter.</b> <span>Pets, PBs, valuable drops, collection log slots, quests, achievements — each its own toggle.</span></span></div>
+          <div class="cap"><span class="n" style="background:transparent;border-color:#3a3f45;color:var(--faint)">·</span><span class="t"><span>Deaths off by default — flip it on if you like a good clutch (or a good disaster).</span></span></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="strip">
+    <div class="it"><span class="k"></span><b>Nothing uploaded</b> — clips stay on your PC</div>
+    <div class="it"><span class="k"></span>Captures the <b>game window only</b>, via RuneLite’s own API</div>
+    <div class="it"><span class="k"></span>Runs <b>only while logged in</b></div>
+    <div class="it"><span class="k"></span><b>Open source</b>, on the Plugin Hub</div>
+  </div>
+
+  <p class="foot-note">Search “Instant Replay” in the RuneLite Plugin Hub · video-only (MJPEG-AVI)</p>
+</div>
