@@ -28,8 +28,8 @@ import net.runelite.api.Player;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.events.WidgetLoaded;
+import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.widgets.Widget;
-import net.runelite.api.widgets.WidgetID;
 import net.runelite.client.Notifier;
 import net.runelite.client.RuneLite;
 import net.runelite.client.chat.ChatColorType;
@@ -305,7 +305,7 @@ public class ClipRecorderPlugin extends Plugin
 			// buffer, so a PIN can never end up in a saved clip.
 			framePending.set(false);
 
-			Widget bankPin = client.getWidget(WidgetID.BANK_PIN_GROUP_ID, 0);
+			Widget bankPin = client.getWidget(InterfaceID.BankpinKeypad.UNIVERSE);
 			if (bankPin != null && !bankPin.isHidden())
 			{
 				return;
