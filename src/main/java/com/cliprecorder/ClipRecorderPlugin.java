@@ -43,10 +43,8 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.game.ItemStack;
 import net.runelite.client.input.KeyManager;
 import net.runelite.client.plugins.Plugin;
-import net.runelite.client.plugins.PluginDependency;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.loottracker.LootReceived;
-import net.runelite.client.plugins.loottracker.LootTrackerPlugin;
 import net.runelite.client.ui.ClientToolbar;
 import net.runelite.client.ui.DrawManager;
 import net.runelite.client.ui.NavigationButton;
@@ -60,7 +58,6 @@ import com.google.inject.Provides;
 	description = "Keeps a rolling buffer of gameplay and saves a video clip on PBs, valuable drops, achievements, or a hotkey",
 	tags = {"clip", "record", "video", "replay", "pb", "drop", "collection log"}
 )
-@PluginDependency(LootTrackerPlugin.class)
 public class ClipRecorderPlugin extends Plugin
 {
 	private static final Pattern NEW_PB_PATTERN = Pattern.compile("\\(new personal best\\)");
